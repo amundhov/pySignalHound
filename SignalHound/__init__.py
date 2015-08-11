@@ -2159,7 +2159,8 @@ class SignalHound(object):
 		is safe to preserve beyond the scope of a calling function.
 		'''
 		bufAdr = ct.addressof(ctBuff)
-		arr = np.frombuffer(int_asbuffer(bufAdr, buffLen * dtype().nbytes), dtype=dtype)  # Map array memory as a numpy array.
-		arr = arr.copy()  # Then copy it, so our array won't get modified when the circular buffer overwrites itself.
+		res = ct.ARRAY(ct.c_byte, buffLen * dtype().nbytes).from_address(bufAdr)
+		arr = np.frombuffer(res, dtype=dtype)
+		arr = arr.copy()
 		# We have to copy() since the call normally just returns a array that is overlaid onto the pre-existing data
 		return arr
